@@ -79,11 +79,13 @@ public final class ProjectUtils {
     }
 
     static String getUrl() {
-        return String.format("http://%s:%s/",
+        return String.format("http://%s:%s",
                 properties.getProperty(PROP_HOST),
                 properties.getProperty(PROP_PORT));
     }
-
+    public static String getBaseUrl(){
+        return getUrl();
+    }
     static String getUserName() {
         return properties.getProperty(PROP_ADMIN_USERNAME);
     }

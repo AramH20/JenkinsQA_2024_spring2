@@ -97,11 +97,11 @@ public class JenkinsUtils {
         if (page.statusCode() != 200) {
             final String HEAD_COOKIE = "set-cookie";
 
-            HttpResponse<String> loginPage = getHttp(ProjectUtils.getUrl() + "login?from=%2F");
+            HttpResponse<String> loginPage = getHttp(ProjectUtils.getUrl() + "/login?from=%2F");
             sessionId = loginPage.headers().firstValue(HEAD_COOKIE).orElse(null);
 
             // Поле sessionId используется внутри postHttp
-            HttpResponse<String> indexPage = postHttp(ProjectUtils.getUrl() + "j_spring_security_check",
+            HttpResponse<String> indexPage = postHttp(ProjectUtils.getUrl() + "/j_spring_security_check",
                     String.format("j_username=%s&j_password=%s&from=%%2F&Submit=",
                             URLEncoder.encode(ProjectUtils.getUserName(), StandardCharsets.UTF_8),
                             URLEncoder.encode(ProjectUtils.getPassword(), StandardCharsets.UTF_8)));
@@ -135,19 +135,19 @@ public class JenkinsUtils {
 
     private static void deleteViews() {
         String mainPage = getPage("");
-        deleteByLink("view/%s/doDelete",
+        deleteByLink("/view/%s/doDelete",
                 getSubstringsFromPage(mainPage, "href=\"/view/", "/\""),
                 getCrumbFromPage(mainPage));
 
-        String viewPage = getPage("me/my-views/view/all/");
-        deleteByLink("user/admin/my-views/view/%s/doDelete",
+        String viewPage = getPage("/me/my-views/view/all/");
+        deleteByLink("/user/admin/my-views/view/%s/doDelete",
                 getSubstringsFromPage(viewPage, "href=\"/user/admin/my-views/view/", "/\""),
                 getCrumbFromPage(viewPage));
     }
 
     private static void deleteUsers() {
-        String userPage = getPage("manage/securityRealm/");
-        deleteByLink("manage/securityRealm/user/%s/doDelete",
+        String userPage = getPage("/manage/securityRealm/");
+        deleteByLink("/manage/securityRealm/user/%s/doDelete",
                 getSubstringsFromPage(userPage, "href=\"user/", "/\"").stream()
                         .filter(user -> !user.equals(ProjectUtils.getUserName())).collect(Collectors.toSet()),
                 getCrumbFromPage(userPage));
@@ -155,25 +155,25 @@ public class JenkinsUtils {
 
     private static void deleteNodes() {
         String mainPage = getPage("");
-        deleteByLink("manage/computer/%s/doDelete",
+        deleteByLink("/manage/computer/%s/doDelete",
                 getSubstringsFromPage(mainPage, "href=\"/computer/", "/\""),
                 getCrumbFromPage(mainPage));
     }
 
     private static void deleteDescription() {
         String mainPage = getPage("");
-        postHttp(ProjectUtils.getUrl() + "submitDescription",
+        postHttp(ProjectUtils.getUrl() + "/submitDescription",
                 String.format(
-                        "description=&Submit=&Jenkins-Crumb=%1$s&json=%%7B%%22description%%22%%3A+%%22%%22%%2C+%%22Submit%%22%%3A+%%22%%22%%2C+%%22Jenkins-Crumb%%22%%3A+%%22%1$s%%22%%7D",
+                        "/description=&Submit=&Jenkins-Crumb=%1$s&json=%%7B%%22description%%22%%3A+%%22%%22%%2C+%%22Submit%%22%%3A+%%22%%22%%2C+%%22Jenkins-Crumb%%22%%3A+%%22%1$s%%22%%7D",
                         getCrumbFromPage(mainPage)));
     }
 
     private static void deleteCredentials() {
         String mainPage = getPage("");
-        postHttp(ProjectUtils.getUrl() + "manage/credentials/store/system/domain/_/doDelete",
+        postHttp(ProjectUtils.getUrl() + "/manage/credentials/store/system/domain/_/doDelete",
                 String.format("Jenkins-Crumb=%s", getCrumbFromPage(mainPage)));
 
-        postHttp(ProjectUtils.getUrl() + "user/admin/credentials/store/user/domain/_/doDelete",
+        postHttp(ProjectUtils.getUrl() + "/user/admin/credentials/store/user/domain/_/doDelete",
                 String.format("Jenkins-Crumb=%s", getCrumbFromPage(mainPage)));
     }
 
@@ -198,4 +198,3 @@ public class JenkinsUtils {
         driver.findElement(By.xpath("//a[@href='/logout']")).click();
     }
 }
-
